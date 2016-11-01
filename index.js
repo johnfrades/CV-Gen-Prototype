@@ -65,6 +65,17 @@ app.get('/', function(req, res){
 });
 
 
+app.get('/allstudent', function(req, res){
+	Student.find({}, function(err, allStudent){
+		if(err){
+			console.log(err);
+		} else {
+			res.send(allStudent);
+		}
+	});
+});
+
+
 app.post('/register', function(req, res){
 	var theStudentInfo = req.body.student;
 
