@@ -30,25 +30,25 @@
 </form>
 
 
-<h1>Register</h1>
+<!-- <h1>Register</h1>
 
 <form class="form-horizontal" action="/register" method="POST">
   <div class="form-group">
     <label for="fullname" class="col-sm-2 control-label">Fullname</label>
     <div class="col-sm-10">
-      <input type="text" name="student[fullname]" class="form-control" id="fullname" placeholder="Fullname">
+      <input type="text" name="student[fullname]" class="form-control" id="fullname" placeholder="Fullname" required>
     </div>
   </div>
   <div class="form-group">
     <label for="studentid" class="col-sm-2 control-label">Student ID</label>
     <div class="col-sm-10">
-      <input type="number" name="student[username]" class="form-control" id="studentid" placeholder="Student ID">
+      <input type="number" name="student[username]" class="form-control" id="studentid" placeholder="Student ID" required>
     </div>
   </div>
   <div class="form-group">
     <label for="email" class="col-sm-2 control-label">Email</label>
     <div class="col-sm-10">
-      <input type="email" name="student[email]" class="form-control" id="email" placeholder="Email">
+      <input type="email" name="student[email]" class="form-control" id="email" placeholder="Email" required>
     </div>
   </div>
   <div class="form-group">
@@ -57,25 +57,78 @@
       <input type="password" name="thepassword" class="form-control" id="pass1" placeholder="Password" required>
     </div>
   </div>
-  <div class="form-group">
-    <label for="inputPassword2" class="col-sm-2 control-label">Password Confirmation</label>
-    <div class="col-sm-10">
-      <input type="password" class="form-control" id="pass2" placeholder="Password" onkeyup="checkPass(); return false" required>
-       <span id="confirmMessage" class="confirmMessage"></span>
-    </div>
-  </div>
     <div class="form-group">
     <label for="authKey" class="col-sm-2 control-label">Authorization Key</label>
     <div class="col-sm-10">
-      <input type="text" name="student[authkey]" class="form-control" id="authKey" placeholder="Authorization Key">
+      <input type="text" name="student[authkey]" class="form-control" id="authKey" placeholder="Authorization Key" required>
     </div>
   </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default" id="buttonSubmit" disabled>Sign in</button>
+      <button type="submit" class="btn btn-default" id="buttonSubmit">Sign in</button>
+    </div>
+  </div>
+</form> -->
+
+
+<h1>Register</h1>
+
+<form class="form-horizontal" action="/reg" method="POST">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Student ID</label>
+    <div class="col-sm-10">
+      <input type="number" name="regstudentid" class="form-control" placeholder="Student ID">
+    </div>
+  </div>
+  <div class="form-group">
+    <label  class="col-sm-2 control-label">Authentication Key</label>
+    <div class="col-sm-10">
+      <input type="text" name="regauthkey" class="form-control"  placeholder="Authentication Key">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Sign in</button>
     </div>
   </div>
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Generate Authentication Key</h1>
+
+<form class="form-horizontal" action="/authkeygen" method="POST">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Student ID</label>
+    <div class="col-sm-10">
+      <input type="number" name="genauthkey[studentid]" class="form-control" placeholder="Student ID">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Authentication Key</label>
+    <div class="col-sm-10">
+      <input type="text" name="genauthkey[authkey]" class="form-control"  placeholder="Authentication Key">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Generate</button>
+    </div>
+  </div>
+</form>
+
+
+
 
 
 <a href="/allstudent">
@@ -88,6 +141,5 @@
 
 
 
-<script type="text/javascript" src="/javascript/app.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override')
 var passport = require('passport');
 var passportLocal = require('passport-local');
 var passportLocalMongoose = require('passport-local-mongoose');
@@ -9,6 +10,7 @@ var passportLocalMongoose = require('passport-local-mongoose');
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
+app.use(methodOverride('_method'));
 
 
 // mongoose.connect('mongodb://localhost/prototype2');
@@ -28,11 +30,19 @@ var StudentSchema = new mongoose.Schema({
 });
 
 
+var AuthKeySchema = new mongoose.Schema({
+	authkey: String,
+	studentid: Number
+});
+
+
 //This line very important to place it properly after the schema and before the model
 StudentSchema.plugin(passportLocalMongoose);
 
+
 //Model
 var Student = mongoose.model('Student', StudentSchema);
+var AuthKey = mongoose.model('Authkey', AuthKeySchema);
 
 
 
@@ -51,17 +61,17 @@ passport.serializeUser(Student.serializeUser());
 passport.deserializeUser(Student.deserializeUser());
 
 
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    next();
+});
 
 
 
 
 //Routes
 app.get('/', function(req, res){
-	if(req.user === undefined){
-		res.render('homepage');
-	} else {
-		res.send(req.user);
-	}
+	res.render('homepage');
 });
 
 
@@ -91,9 +101,40 @@ app.post('/register', function(req, res){
 	});
 });
 
+app.get('/student', function(req, res){
+	res.render('student');
+});
+
+
+app.post('/authkeygen', function(req, res){
+	var authkey = req.body.genauthkey;
+
+	AuthKey.create(authkey, function(err, authkeygen){
+		if(err){
+			console.log(err);
+		} else {
+			res.send(authkeygen);
+		}
+	});
+});
+
+app.post('/reg', function(req, res){
+	var regstudentid = req.body.regstudentid;
+	var regauthkey = req.body.regauthkey;
+		AuthKey.find({'studentid': regstudentid, 'authkey': regauthkey}, function(err, foundStudent){
+			if(err){
+				console.log(err);
+			} else if(foundStudent.length === 0) {
+				res.send('Wrong Student ID/Authentication key. Please check with the Administrator');
+			} else {
+				res.render('register', {foundStudent: foundStudent});
+			}
+		});
+	});
+
 
 app.post("/login", passport.authenticate("local", {
-	successRedirect: "back",
+	successRedirect: "/student",
 	failureRedirect: "back"
 }));
 
