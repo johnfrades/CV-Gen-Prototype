@@ -8,6 +8,8 @@ var passportLocalMongoose = require('passport-local-mongoose');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
+
 
 // mongoose.connect('mongodb://localhost/prototype2');
 mongoose.connect('mongodb://admin:admin@ds011890.mlab.com:11890/prototype2');
