@@ -1,0 +1,6 @@
+.loginForm, .regForm, .authForm {
+	
+	border: 2px solid black;
+	margin: 2em 0;
+	padding: 1em 1em;
+}
