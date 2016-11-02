@@ -32,7 +32,8 @@ var StudentSchema = new mongoose.Schema({
 
 var AuthKeySchema = new mongoose.Schema({
 	authkey: String,
-	studentid: Number
+	studentid: Number,
+	used: Boolean
 });
 
 
@@ -88,7 +89,6 @@ app.get('/allstudent', function(req, res){
 
 app.post('/register', function(req, res){
 	var theStudentInfo = req.body.student;
-
 	var newStudent = new Student(theStudentInfo);
 
 	Student.register(newStudent, req.body.thepassword, function(err, registerStudent){
@@ -96,7 +96,13 @@ app.post('/register', function(req, res){
 		if(err){
 			console.log(err);
 		} else {
-			res.send(registerStudent);
+			AuthKey.findOneAndUpdate({'studentid': theStudentInfo.username}, {$set: {'used': true}}, function(err, Updated){
+				if(err){
+					console.log(err);
+				} else {
+					res.send(registerStudent);
+				}
+			})
 		}
 	});
 });
@@ -113,6 +119,8 @@ app.post('/authkeygen', function(req, res){
 		if(err){
 			console.log(err);
 		} else {
+			authkeygen.used = false;
+			authkeygen.save();
 			res.send(authkeygen);
 		}
 	});
@@ -121,11 +129,14 @@ app.post('/authkeygen', function(req, res){
 app.post('/reg', function(req, res){
 	var regstudentid = req.body.regstudentid;
 	var regauthkey = req.body.regauthkey;
-		AuthKey.find({'studentid': regstudentid, 'authkey': regauthkey}, function(err, foundStudent){
+
+		AuthKey.findOne({'studentid': regstudentid, 'authkey': regauthkey}, function(err, foundStudent){
 			if(err){
 				console.log(err);
 			} else if(foundStudent.length === 0) {
 				res.send('Wrong Student ID/Authentication key. Please check with the Administrator');
+			} else if(foundStudent.used === true){
+				res.send('The authentication code is already been used! Please contact admin!');
 			} else {
 				res.render('register', {foundStudent: foundStudent});
 			}
