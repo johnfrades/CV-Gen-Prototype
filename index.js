@@ -7,44 +7,32 @@ var passport = require('passport');
 var passportLocal = require('passport-local');
 var passportLocalMongoose = require('passport-local-mongoose');
 
+
+//Import the models
+var Student = require('./models/student');
+var AuthKey = require('./models/authkey');
+
+
+//Import the routes
+var indexRoute = require('./routes/index');
+var studentRoute = require('./routes/student');
+var authkeyRoute = require('./routes/authkey');
+
+
+//enables body-parser
 app.use(bodyParser.urlencoded({extended: true}));
+//you don't need to add .ejs everytime you use res.render
 app.set('view engine', 'ejs');
+//to add the directory '/public' so nodejs can look into it. You don't need to put '/public' on everytime
+//you link or src a css/javascript file
 app.use(express.static(__dirname + '/public'));
+//useful for PUT and DELETE method
 app.use(methodOverride('_method'));
 
 
-// mongoose.connect('mongodb://localhost/prototype2');
-mongoose.connect('mongodb://admin:admin@ds011890.mlab.com:11890/prototype2');
-
-
-
-
-
-//Schema
-var StudentSchema = new mongoose.Schema({
-	fullname: String,
-	email: String,
-	username: String,
-	password: String,
-	authkey: String
-});
-
-
-var AuthKeySchema = new mongoose.Schema({
-	authkey: String,
-	studentid: Number,
-	used: Boolean
-});
-
-
-//This line very important to place it properly after the schema and before the model
-StudentSchema.plugin(passportLocalMongoose);
-
-
-//Model
-var Student = mongoose.model('Student', StudentSchema);
-var AuthKey = mongoose.model('Authkey', AuthKeySchema);
-
+//connects to mongodb
+mongoose.connect('mongodb://localhost/prototype2');
+// mongoose.connect('mongodb://admin:admin@ds011890.mlab.com:11890/prototype2');
 
 
 
@@ -68,88 +56,20 @@ app.use(function(req, res, next){
 });
 
 
+//Use the routes
+app.use(studentRoute);
+app.use(authkeyRoute);
+app.use(indexRoute);
 
 
-//Routes
-app.get('/', function(req, res){
-	res.render('homepage');
-});
 
 
-app.get('/allstudent', function(req, res){
-	Student.find({}, function(err, allStudent){
-		if(err){
-			console.log(err);
-		} else {
-			res.send(allStudent);
-		}
-	});
-});
+// //To heroku
+// app.listen(process.env.PORT, function(req, res){
+// 	console.log('server started at PORT 3000');
+// });
 
-
-app.post('/register', function(req, res){
-	var theStudentInfo = req.body.student;
-	var newStudent = new Student(theStudentInfo);
-
-	Student.register(newStudent, req.body.thepassword, function(err, registerStudent){
-		console.log(registerStudent);
-		if(err){
-			console.log(err);
-		} else {
-			AuthKey.findOneAndUpdate({'studentid': theStudentInfo.username}, {$set: {'used': true}}, function(err, Updated){
-				if(err){
-					console.log(err);
-				} else {
-					res.send(registerStudent);
-				}
-			})
-		}
-	});
-});
-
-app.get('/student', function(req, res){
-	res.render('student');
-});
-
-
-app.post('/authkeygen', function(req, res){
-	var authkey = req.body.genauthkey;
-
-	AuthKey.create(authkey, function(err, authkeygen){
-		if(err){
-			console.log(err);
-		} else {
-			authkeygen.used = false;
-			authkeygen.save();
-			res.send(authkeygen);
-		}
-	});
-});
-
-app.post('/reg', function(req, res){
-	var regstudentid = req.body.regstudentid;
-	var regauthkey = req.body.regauthkey;
-
-		AuthKey.findOne({'studentid': regstudentid, 'authkey': regauthkey}, function(err, foundStudent){
-			if(err){
-				console.log(err);
-			} else if(foundStudent.length === 0) {
-				res.send('Wrong Student ID/Authentication key. Please check with the Administrator');
-			} else if(foundStudent.used === true){
-				res.send('The authentication code is already been used! Please contact admin!');
-			} else {
-				res.render('register', {foundStudent: foundStudent});
-			}
-		});
-	});
-
-
-app.post("/login", passport.authenticate("local", {
-	successRedirect: "/student",
-	failureRedirect: "back"
-}));
-
-
-app.listen(process.env.PORT, function(req, res){
+//To localhost
+app.listen('3000', function(req, res){
 	console.log('server started at PORT 3000');
 });
