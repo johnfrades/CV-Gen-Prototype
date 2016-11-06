@@ -113,10 +113,10 @@ router.post('/forgot', function(req, res, next) {
     },
     function(token, user, done) {
       var transporter = nodemailer.createTransport('SMTP', {
-        service: 'SendGrid',
+        service: '',
         auth: {
-          user: 'johnfrads',
-          pass: 'Gathering0936'
+          user: '',
+          pass: ''
         }
       });
       var mailOptions = {
