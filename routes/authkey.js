@@ -3,6 +3,10 @@ var router = express.Router();
 var AuthKey = require('../models/authkey');
 
 
+router.get('/gentempkey', function(req, res){
+	res.render('genauthkey');
+});
+
 router.get('/allauthkey', function(req, res){
 	AuthKey.find({}, function(err, allStudent){
 		if(err){
@@ -28,7 +32,7 @@ router.post('/authkeygen', function(req, res){
 					} else {
 						authkeygen.used = false;
 						authkeygen.save();
-						res.send(authkeygen);
+						res.redirect('/');
 					}
 				});
 					}
