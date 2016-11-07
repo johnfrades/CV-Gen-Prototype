@@ -3,6 +3,7 @@ var passportLocalMongoose = require('passport-local-mongoose');
 var bcrypt = require('bcrypt-nodejs');
 
 var StudentSchema = new mongoose.Schema({
+  folder: String,
 	fullname: String,
 	email: String,
 	username: String,

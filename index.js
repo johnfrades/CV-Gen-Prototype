@@ -12,6 +12,8 @@ var bcrypt = require('bcrypt-nodejs');
 var nodemailer = require('nodemailer');
 var async = require('async');
 var crypto = require('crypto');
+var fs = require('fs');
+var officegen = require('officegen');
 
 
 

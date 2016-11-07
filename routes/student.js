@@ -5,6 +5,11 @@ var AuthKey = require('../models/authkey');
 var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
+var fs = require('fs');
+var officegen = require('officegen');
+
+
+
 
 
 router.get('/allstudent', function(req, res){
@@ -46,12 +51,16 @@ router.post('/register', function(req, res){
 
 
 router.post('/signup', function(req, res) {
+  var fullnameAndId = req.body.fullname + '.' + req.body.username;
+  console.log(fullnameAndId.replace(/\s/g,''));
+
   var theStudent = new Student({
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
       fullname: req.body.fullname,
-      authkey: req.body.authkey
+      authkey: req.body.authkey,
+      folder: fullnameAndId.replace(/\s/g,'')
     });
   AuthKey.findOneAndUpdate({'studentid': req.body.username}, {$set: {'used': true}}, function(err, Updated){
   	if(err){
@@ -64,6 +73,8 @@ router.post('/signup', function(req, res) {
  	 });
   	}
   });
+  var named = "./CV/" + req.body.fullname +'.' + req.body.username;
+  fs.mkdir(named.replace(/\s/g,''));
 });
 
 
@@ -96,15 +107,6 @@ router.post('/forgot', function(req, res, next) {
 
         user.resetPasswordToken = token;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-        user.fullname = 'John Lois';
-
-        console.log(user.resetPasswordToken);
-        console.log(user.resetPasswordExpires);
-        console.log('---------------------------------');
-        console.log(token);
-        console.log(Date.now() + 3600000);
-        console.log('---------------------------------');
-        console.log(user);
 
         user.save(function(err) {
           done(err, token, user);
@@ -189,6 +191,68 @@ router.post('/reset/:token', function(req, res) {
 
 
 
+router.post('/genword', function(req, res){
+  Student.findOne({username: req.user.username}, function(err, theStudent){
+    var docx = officegen('docx');
+
+    var pObj = docx.createP({align: 'right'});
+    pObj.addText(theStudent.fullname.toString(), {color: 'red'});
+
+
+    var named = './CV/' + theStudent.fullname + '.' + theStudent.username + '/' + 'CV.docx'
+    var out = fs.createWriteStream ( named.replace(/\s/g,''));
+
+    out.on ( 'error', function ( err ) {
+      console.log ( err );
+    });
+
+    async.parallel ([
+      function ( done ) {
+        out.on ( 'close', function () {
+          console.log ( 'Created a CV for ' + theStudent.fullname );
+          done ( null );
+        });
+        docx.generate ( out );
+      }
+
+    ], function ( err ) {
+      if ( err ) {
+        console.log ( 'error: ' + err );
+      } 
+    });
+    res.redirect('back');
+  });
+});
+
+
+
+
+
+router.get('/CV/:file', function (req, res){
+
+  var path=require('path');
+
+    file = req.params.file;
+
+    var dirname = path.resolve(".")+'/CV/';
+
+    var img = fs.readFileSync(dirname  + file);
+
+    res.writeHead(200, {'Content-Type': 'image/jpg' });
+
+    res.end(img, 'binary');
+
+});
+
+
+router.get('/CV/:file(*)', function(req, res, next){ // this routes all types of file 
+
+  var path = require('path');
+  var file = req.params.file;
+  var path = path.resolve(".")+'/CV/' + file;
+  res.download(path); // magic of download function
+
+});
 
 
 module.exports = router;

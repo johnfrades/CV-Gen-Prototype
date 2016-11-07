@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Student</title>
-</head>
-<body>
+<% include partials/header %>
 
 
-<h1><%= currentUser %></h1>
 <h1><%= currentUser.fullname %></h1>
-<h1><%= currentUser.email %></h1>
 
-<h1 style="font-weight: 900;"><a href="/">Go Back</a></h1>
 
-</body>
-</html>
+<form action="/genword" method="POST">
+	<button>Generate CV</button>
+</form>
+
+<a href="/logout">Logout</a>
+
+<a href="./CV/<%= currentUser.folder %>/CV.docx">Download</a>
+
+<% include partials/footer %>

@@ -24,6 +24,15 @@ Nov 6 <br>
 -- next target, is to merge the export to Microsoft word and Download data. <br>
 
 
+Nov 7 <br>
+-- Successfully added the Forgot password using token, nodemailer and SendGrid as the SMTP server <br>
+-- Successfully added the Generate a Microsoft Document .docx file extension. <br>
+-- Added a functionality where whenever the Student registers, a new folder will be created under the CV folder with their Fullname.StudentID as the folder name. <br>
+-- Successfully added download functionality for the CV <br>
+
+
+
+
 Cheers! <br>
 
 -John Lois Frades <br>
