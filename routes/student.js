@@ -24,7 +24,14 @@ router.get('/allstudent', function(req, res){
 
 
 router.get('/student', function(req, res){
-	res.render('student');
+  fs.readdir('./CV/' + req.user.folder, function(err, files){
+    if(err){
+      console.log(err);
+    } else {
+      res.render('student', {files: files});
+    }
+  });
+	
 });
 
 
@@ -129,7 +136,7 @@ router.post('/forgot', function(req, res, next) {
           'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
            'http://' + req.headers.host + '/reset/' + token + '\n\n' +
           'If you did not request this, please ignore this email and your password will remain unchanged.\n' +
-          'This link will expire in 1 hour!'
+          'This link will expire in 1 hour!' + '\n\n'+ 'Click the link now my friend! woohoo its working! :D'
       };
       transporter.sendMail(mailOptions, function(err) {
         // req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
@@ -178,6 +185,8 @@ router.post('/reset/:token', function(req, res) {
         subject: 'Your password has been changed',
         text: 'Hello,\n\n' +
           'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+          +  'woohoo its working my friend! try your new password!!!! '
+
       };
       smtpTransport.sendMail(mailOptions, function(err) {
         // req.flash('success', 'Success! Your password has been changed.');
@@ -195,8 +204,13 @@ router.post('/genword', function(req, res){
   Student.findOne({username: req.user.username}, function(err, theStudent){
     var docx = officegen('docx');
 
-    var pObj = docx.createP({align: 'right'});
-    pObj.addText(theStudent.fullname.toString(), {color: 'red'});
+    var pObj = docx.createP();
+    pObj.addText(theStudent.fullname.toString());
+    pObj.addLineBreak();
+    pObj.addText('Student ID# ' + theStudent.username.toString());
+    pObj.addLineBreak();
+    pObj.addText(theStudent.email.toString(), {color: 'red'});
+
 
 
     var named = './CV/' + theStudent.fullname + '.' + theStudent.username + '/' + 'CV.docx'

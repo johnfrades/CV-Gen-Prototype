@@ -10,6 +10,11 @@
 
 <a href="/logout">Logout</a>
 
-<a href="./CV/<%= currentUser.folder %>/CV.docx">Download</a>
+
+<a href="./CV/<%= currentUser.folder %>/<%= files %>">
+	<h1>
+	<%= files %>	
+	</h1>	
+</a>
 
 <% include partials/footer %>
