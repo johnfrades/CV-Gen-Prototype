@@ -30,6 +30,8 @@ Nov 7 <br>
 -- Added a functionality where whenever the Student registers, a new folder will be created under the CV folder with their Fullname.StudentID as the folder name. <br>
 -- Successfully added download functionality for the CV <br>
 
+Nov 9 <br>
+-- Added password validation functionality
 
 
 
