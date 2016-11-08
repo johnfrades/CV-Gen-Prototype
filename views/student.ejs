@@ -10,11 +10,13 @@
 
 <a href="/logout">Logout</a>
 
-
-<a href="./CV/<%= currentUser.folder %>/<%= files %>">
+<% files.forEach(function(CV){ %>
+<a href="./CV/<%= currentUser.folder %>/<%= CV %>">
 	<h1>
-	<%= files %>	
+	<%= CV %>	
 	</h1>	
 </a>
+
+<% }) %>
 
 <% include partials/footer %>
